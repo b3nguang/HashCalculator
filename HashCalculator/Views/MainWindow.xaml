@@ -76,6 +76,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
                     Grid.Column="0"
@@ -293,6 +294,26 @@
                 </StackPanel>
                 <StackPanel
                     Grid.Column="11"
+                    Margin="8,0,0,0">
+                    <Button
+                        Command="{Binding RemoveDuplicateHashesCmd}"
+                        IsEnabled="{Binding State, Converter={StaticResource MainModelStateToBooleanCvt}}"
+                        Style="{StaticResource ImageButtonStyle2}"
+                        ToolTip="按当前算法和实际哈希值去重，保留最先出现的一行，未完成或失败的行不会被移除">
+                        <Image
+                            Width="32"
+                            Height="32"
+                            Source="{StaticResource clear_filters_grayDrawingImage}" />
+                    </Button>
+                    <TextBlock
+                        Margin="0,2"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource ImgButtonTextStyle1}"
+                        Text="哈希去重"
+                        Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Column="12"
                     Margin="8,0,0,0"
                     Visibility="{Binding Source={x:Static local:Settings.Current}, Path=ShowClearAllTableLinesButton, Converter={StaticResource FalseToVisibilityCollapsedCvt}}">
                     <Button
@@ -312,7 +333,7 @@
                         Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
                 </StackPanel>
                 <StackPanel
-                    Grid.Column="12"
+                    Grid.Column="13"
                     Margin="8,0,0,0"
                     Visibility="{Binding Source={x:Static local:Settings.Current}, Path=ShowContinueDisplayedModelsButton, Converter={StaticResource FalseToVisibilityCollapsedCvt}}">
                     <Button
@@ -332,7 +353,7 @@
                         Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
                 </StackPanel>
                 <StackPanel
-                    Grid.Column="13"
+                    Grid.Column="14"
                     Margin="8,0,0,0"
                     Visibility="{Binding Source={x:Static local:Settings.Current}, Path=ShowPauseDisplayedModelsButton, Converter={StaticResource FalseToVisibilityCollapsedCvt}}">
                     <Button
@@ -352,7 +373,7 @@
                         Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
                 </StackPanel>
                 <StackPanel
-                    Grid.Column="14"
+                    Grid.Column="15"
                     Margin="8,0,0,0"
                     Visibility="{Binding Source={x:Static local:Settings.Current}, Path=ShowCancelDisplayedModelsButton, Converter={StaticResource FalseToVisibilityCollapsedCvt}}">
                     <Button
@@ -372,7 +393,7 @@
                         Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
                 </StackPanel>
                 <StackPanel
-                    Grid.Column="15"
+                    Grid.Column="16"
                     Margin="8,0,0,0"
                     Visibility="{Binding Source={x:Static local:Settings.Current}, Path=ShowMainWindowTopmostButton, Converter={StaticResource FalseToVisibilityCollapsedCvt}}">
                     <Button
@@ -391,7 +412,7 @@
                         Text="置顶窗口"
                         Visibility="{Binding Source={x:Static local:Settings.Current}, Path=DisplayMainWndButtonText, Converter={StaticResource FalseToVisibilityCollapsedCvt}}" />
                 </StackPanel>
-                <StackPanel Grid.Column="16" Margin="8,0,0,0">
+                <StackPanel Grid.Column="17" Margin="8,0,0,0">
                     <Button
                         Command="{Binding OpenSettingsWindowCmd}"
                         Style="{StaticResource ImageButtonStyle2}"

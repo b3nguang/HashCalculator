@@ -44,6 +44,7 @@ namespace HashCalculator
         private RelayCommand openSelectAlgoWndCmd;
         private RelayCommand mainWindowTopmostCmd;
         private RelayCommand clearAllTableLinesCmd;
+        private RelayCommand removeDuplicateHashesCmd;
         private RelayCommand exportHashResultsCmd;
         private RelayCommand copyAndRestartModelsCmd;
         private RelayCommand refreshOriginalModelsCmd;
@@ -986,6 +987,48 @@ namespace HashCalculator
             {
                 this.clearAllTableLinesCmd ??= new RelayCommand(this.ClearAllTableLinesAction);
                 return this.clearAllTableLinesCmd;
+            }
+        }
+
+        private void RemoveDuplicateHashesAction(object param)
+        {
+            var seenHashes = new HashSet<string>();
+            HashViewModel[] duplicates = HashViewModels.Where(model =>
+            {
+                AlgoInOutModel current = model.CurrentInOutModel;
+                if (model.Result != HashResult.Succeeded || current?.HashResult == null)
+                {
+                    return false;
+                }
+
+                string key = $"{current.AlgoType}:{Convert.ToHexString(current.HashResult)}";
+                return !seenHashes.Add(key);
+            }).ToArray();
+
+            foreach (HashViewModel model in duplicates)
+            {
+                model.ShutdownModel();
+                HashViewModels.Remove(model);
+                this.displayedModels.Remove(model);
+            }
+
+            if (duplicates.Length == 0)
+            {
+                NotificationSender.GrowlWarning("没有发现重复的哈希值。");
+            }
+            else
+            {
+                NotificationSender.GrowlSuccess($"已移除 {duplicates.Length} 行重复哈希值。");
+                this.GenerateFileHashCheckReport();
+            }
+        }
+
+        public ICommand RemoveDuplicateHashesCmd
+        {
+            get
+            {
+                this.removeDuplicateHashesCmd ??= new RelayCommand(this.RemoveDuplicateHashesAction);
+                return this.removeDuplicateHashesCmd;
             }
         }
 
