@@ -13,12 +13,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout dependencies
+        shell: pwsh
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive
+
       - name: Set up .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      - name: Build
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build shell extensions
+        run: |
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=Win32
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=x64
+
+      - name: Build application
         run: dotnet build HashCalculator/HashCalculator.csproj --configuration Release
 
       - name: Upload build output
