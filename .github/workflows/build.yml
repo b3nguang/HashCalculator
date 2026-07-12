@@ -43,8 +43,10 @@ jobs:
         shell: pwsh
         run: |
           $msysRoot = (Join-Path $env:RUNNER_TEMP 'msys64').Replace('\', '/')
+          $env:PATH = "$msysRoot/mingw32/bin;$env:PATH"
           cmake -S OpenHashLibs -B OpenHashLibs/build-x86 -G "MinGW Makefiles" -DCMAKE_C_COMPILER="$msysRoot/mingw32/bin/gcc.exe" -DCMAKE_CXX_COMPILER="$msysRoot/mingw32/bin/g++.exe" -DCMAKE_MAKE_PROGRAM="$msysRoot/mingw32/bin/mingw32-make.exe"
           cmake --build OpenHashLibs/build-x86 --config Release
+          $env:PATH = "$msysRoot/mingw64/bin;$env:PATH"
           cmake -S OpenHashLibs -B OpenHashLibs/build-x64 -G "MinGW Makefiles" -DCMAKE_C_COMPILER="$msysRoot/mingw64/bin/gcc.exe" -DCMAKE_CXX_COMPILER="$msysRoot/mingw64/bin/g++.exe" -DCMAKE_MAKE_PROGRAM="$msysRoot/mingw64/bin/mingw32-make.exe"
           cmake --build OpenHashLibs/build-x64 --config Release
 
