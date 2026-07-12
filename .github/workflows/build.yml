@@ -28,9 +28,11 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Build shell extensions
+        shell: pwsh
         run: |
-          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=Win32
-          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=x64
+          $outputDir = Join-Path $env:GITHUB_WORKSPACE 'HashCalculator\ShellExt'
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=Win32 /p:OutDir="$outputDir\"
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=x64 /p:OutDir="$outputDir\"
 
       - name: Build application
         run: dotnet build HashCalculator/HashCalculator.csproj --configuration Release
