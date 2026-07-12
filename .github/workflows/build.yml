@@ -42,10 +42,10 @@ jobs:
       - name: Build hash libraries
         shell: pwsh
         run: |
-          & C:\msys64\mingw32\bin\cmake.exe -S OpenHashLibs -B OpenHashLibs/build-x86 -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/msys64/mingw32/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw32/bin/g++.exe -DCMAKE_MAKE_PROGRAM=C:/msys64/mingw32/bin/mingw32-make.exe
-          & C:\msys64\mingw32\bin\cmake.exe --build OpenHashLibs/build-x86 --config Release
-          & C:\msys64\mingw64\bin\cmake.exe -S OpenHashLibs -B OpenHashLibs/build-x64 -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/msys64/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe -DCMAKE_MAKE_PROGRAM=C:/msys64/mingw64/bin/mingw32-make.exe
-          & C:\msys64\mingw64\bin\cmake.exe --build OpenHashLibs/build-x64 --config Release
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x86 -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/msys64/mingw32/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw32/bin/g++.exe -DCMAKE_MAKE_PROGRAM=C:/msys64/mingw32/bin/mingw32-make.exe
+          cmake --build OpenHashLibs/build-x86 --config Release
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x64 -G "MinGW Makefiles" -DCMAKE_C_COMPILER=C:/msys64/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe -DCMAKE_MAKE_PROGRAM=C:/msys64/mingw64/bin/mingw32-make.exe
+          cmake --build OpenHashLibs/build-x64 --config Release
 
       - name: Build shell extensions
         shell: pwsh
