@@ -27,6 +27,28 @@ jobs:
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Set up MinGW
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-i686-gcc
+            mingw-w64-x86_64-gcc
+            mingw-w64-i686-cmake
+            mingw-w64-x86_64-cmake
+            mingw-w64-i686-make
+            mingw-w64-x86_64-make
+
+      - name: Build hash libraries
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x86 -G "MinGW Makefiles"
+          cmake --build OpenHashLibs/build-x86 --config Release
+          $env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x64 -G "MinGW Makefiles"
+          cmake --build OpenHashLibs/build-x64 --config Release
+
       - name: Build shell extensions
         shell: pwsh
         run: |
