@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout dependencies
+        shell: pwsh
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up MinGW
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-i686-gcc
+            mingw-w64-x86_64-gcc
+            mingw-w64-i686-cmake
+            mingw-w64-x86_64-cmake
+            mingw-w64-i686-make
+            mingw-w64-x86_64-make
+
+      - name: Build hash libraries
+        shell: pwsh
+        run: |
+          $msysRoot = (Join-Path $env:RUNNER_TEMP 'msys64').Replace('\', '/')
+          $env:PATH = "$msysRoot/mingw32/bin;$env:PATH"
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x86 -G "MinGW Makefiles" -DCMAKE_C_COMPILER="$msysRoot/mingw32/bin/gcc.exe" -DCMAKE_CXX_COMPILER="$msysRoot/mingw32/bin/g++.exe" -DCMAKE_MAKE_PROGRAM="$msysRoot/mingw32/bin/mingw32-make.exe"
+          cmake --build OpenHashLibs/build-x86 --config Release
+          $env:PATH = "$msysRoot/mingw64/bin;$env:PATH"
+          cmake -S OpenHashLibs -B OpenHashLibs/build-x64 -G "MinGW Makefiles" -DCMAKE_C_COMPILER="$msysRoot/mingw64/bin/gcc.exe" -DCMAKE_CXX_COMPILER="$msysRoot/mingw64/bin/g++.exe" -DCMAKE_MAKE_PROGRAM="$msysRoot/mingw64/bin/mingw32-make.exe"
+          cmake --build OpenHashLibs/build-x64 --config Release
+
+      - name: Build shell extensions
+        shell: pwsh
+        run: |
+          $outputDir = Join-Path $env:GITHUB_WORKSPACE 'HashCalculator\ShellExt'
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=Win32 /p:OutDir="$outputDir\"
+          msbuild ShellExtensions/ShellExtensions.vcxproj /m /p:Configuration=Release /p:Platform=x64 /p:OutDir="$outputDir\"
+
+      - name: Build application
+        run: dotnet build HashCalculator/HashCalculator.csproj --configuration Release
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: HashCalculator-Release
+          path: Bin/Release/net10.0-windows7.0/
+          if-no-files-found: error
